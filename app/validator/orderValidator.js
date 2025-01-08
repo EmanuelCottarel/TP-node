@@ -13,7 +13,8 @@ const orderValidator= {
             .isFloat({ min: 0 }).withMessage('Price must be a positive number'),
         body('date')
             .notEmpty().withMessage('Date is required')
-            .isISO8601().withMessage('Date must be in ISO 8601 format'),
+            .isISO8601().withMessage('Date must be in ISO 8601 format')
+            .isBefore((new Date()).toISOString()).withMessage('Date must not be in the future'),
     ],
 
     update: [

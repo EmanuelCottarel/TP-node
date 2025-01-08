@@ -1,5 +1,4 @@
 const Order = require('../model/order');
-const Bar = require("../model/bar");
 const Beer = require("../model/beer");
 let methods = {};
 
@@ -11,13 +10,12 @@ methods.findAll = (req, res) => {
 
 methods.findById = (req, res) => {
     const {id} = req.params;
-    if (isNaN(parseInt(id))) return res.status(400).json('Id not a number');
     Order.findByPk(id).then((result) => {
         if (!result) {
             return res.status(404).json('Resource not found');
         }
         res.json(result);
-    }).catch(err => res.status(500).json({message: 'Internal server error'}));
+    }).catch(err => res.status(500).json({message: 'Internal server error', err}));
 };
 
 methods.create = (req, res) => {
@@ -27,9 +25,12 @@ methods.create = (req, res) => {
 };
 
 methods.update = (req, res) => {
-    const {name, age} = req.body;
+    const {name, price, date, status} = req.body;
+    if (status === 'completed') {
+        return res.status(400).json({message: 'Completed order can\'t be updated'})
+    }
     Order.update(
-        {name, age},
+        {name, price, date, status},
         {
             where: {
                 id: parseInt(req.params.id),
@@ -53,14 +54,16 @@ methods.delete = (req, res) => {
 methods.addBeer = async (req, res) => {
     const {idOrder, idBeer} = req.params;
     try {
-        const order = await Order.findByPk(parseInt(idOrder));
+        const order = await Order.findByPk(idOrder);
         if (!order) {
             return res.status(404).json({message: 'Order not found'});
         }
-        const beer = await Beer.findByPk(parseInt(idOrder));
+        console.log(order)
+        const beer = await Beer.findByPk(idBeer);
         if (!beer) {
             return res.status(404).json({message: 'Beer not found'});
         }
+        console.log(beer)
         await order.addBeer(beer);
         res.status(200).json({message: `Beer ${idBeer} added to Order ${idOrder}`});
     } catch (e) {
@@ -76,7 +79,7 @@ methods.removeBeer = async (req, res) => {
         if (!order) {
             return res.status(404).json({message: 'Order not found'});
         }
-        const beer = await Beer.findByPk(parseInt(idOrder));
+        const beer = await Beer.findByPk(parseInt(idBeer));
         if (!beer) {
             return res.status(404).json({message: 'Beer not found'});
         }
@@ -96,9 +99,9 @@ methods.findBeers = async (req, res) => {
             return res.status(404).json({message: 'Order not found'});
         }
 
-        const beers = await order.getBeers();
+        // const beers = await order.getBeerOrders();
 
-        res.json(beers);
+        // res.json(beers);
     } catch (e) {
         console.error(e);
         res.status(500).json({message: 'Internal server error'});
