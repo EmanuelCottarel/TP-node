@@ -26,5 +26,7 @@ router.post('/:idBar/removeBeer/:idBeer', controller.removeBeer);
 
 //Order
 router.get('/:id/findOrders', controller.findOrders);
+router.get('/:id/findOrdersByDate', controller.findOrdersByDate);
+
 
 module.exports = router;

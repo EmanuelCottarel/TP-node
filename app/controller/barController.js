@@ -22,6 +22,9 @@ methods.findById = (req, res) => {
 methods.create = (req, res) => {
     Bar.create({...req.body}).then((result) => {
         res.status(201).json(result);
+    }).catch(err => {
+        console.error(err);
+        res.status(500).json({message: 'Internal server error'});
     })
 };
 
@@ -113,6 +116,29 @@ methods.findOrders = async (req, res) => {
         }
 
         const orders = await bar.getOrders();
+
+        res.json(orders);
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({message: 'Internal server error'});
+    }
+}
+
+methods.findOrdersByDate = async (req, res) => {
+    const {id} = req.params;
+    const date = req.query['date'];
+    console.log(date);
+    try {
+        const bar = await Bar.findByPk(id);
+        if (!bar) {
+            return res.status(404).json({message: 'Bar not found'});
+        }
+
+        const orders = await bar.getOrders({
+            where: {
+                date
+            }
+        });
 
         res.json(orders);
     } catch (e) {

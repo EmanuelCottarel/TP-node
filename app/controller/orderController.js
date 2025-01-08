@@ -99,9 +99,9 @@ methods.findBeers = async (req, res) => {
             return res.status(404).json({message: 'Order not found'});
         }
 
-        // const beers = await order.getBeerOrders();
+        const beers = await order.getBeers();
 
-        // res.json(beers);
+        res.json(beers);
     } catch (e) {
         console.error(e);
         res.status(500).json({message: 'Internal server error'});

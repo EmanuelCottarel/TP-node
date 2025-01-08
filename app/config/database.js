@@ -6,6 +6,6 @@ const db = new Sequelize({
     logging: console.log
 });
 
-db.sync({ alter: true });
+db.sync();
 
 module.exports = db;

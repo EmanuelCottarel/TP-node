@@ -1,4 +1,5 @@
 const { body, param } = require('express-validator');
+const {query} = require("express");
 
 const barValidator = {
     create: [
@@ -26,6 +27,8 @@ const barValidator = {
     delete: [
         param('id').isInt().withMessage('Id must be an integer'),
     ],
+    findOrdersByDate: [
+    ]
 };
 
 module.exports = barValidator;
